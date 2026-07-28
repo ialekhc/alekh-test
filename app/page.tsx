@@ -5,13 +5,19 @@ import { useEffect, useMemo, useState } from "react";
 // PERSONALIZE: Change her name here once and it updates the visible headings.
 const HER_NAME = "Maya";
 
-// PERSONALIZE: Replace each empty `image` with a path such as "/images/us-1.jpg".
-// Put your photos inside public/images/ and keep the captions you like.
+// PERSONALIZE: Replace these paths or captions whenever you want to update the gallery.
 const memories = [
-  { image: "", caption: "Yo din yaad cha? 🥹", tone: "peach" },
-  { image: "", caption: "Timro yo smile mero favourite ho ❤️", tone: "rose" },
-  { image: "", caption: "Hami dui jana + random memories = best combination 😂❤️", tone: "lilac" },
-  { image: "", caption: "Yo moment feri repeat garnu cha.", tone: "gold" },
+  { image: "/images/memories/memory-01.jpg", caption: "Partners in crime, looking suspiciously innocent 😂❤️" },
+  { image: "/images/memories/memory-02.jpg", caption: "Timro yo smile mero favourite ho ❤️" },
+  { image: "/images/memories/memory-03.jpg", caption: "Jata timi, tetai ma 🥹" },
+  { image: "/images/memories/memory-04.jpg", caption: "Hami dui jana + random moments = best combination 😂❤️" },
+  { image: "/images/memories/memory-05.jpg", caption: "Pretty girl, pretty memory 🌷" },
+  { image: "/images/memories/memory-06.jpg", caption: "Yo din yaad cha? 🥹" },
+  { image: "/images/memories/memory-07.jpg", caption: "Our smiles say everything ❤️" },
+  { image: "/images/memories/memory-08.jpg", caption: "My favorite person, in my favorite frame." },
+  { image: "/images/memories/memory-09.jpg", caption: "Ma timilai herchu, timi camera lai 😭❤️" },
+  { image: "/images/memories/memory-10.jpg", caption: "Chaos, hugs, and us 😂" },
+  { image: "/images/memories/memory-11.jpg", caption: "Yo moment feri repeat garnu cha. ❤️" },
 ];
 
 // PERSONALIZE: Edit these little reasons whenever you want.
@@ -106,15 +112,13 @@ export default function Home() {
         <div className="memory-grid">
           {memories.map((memory, index) => (
             <figure className="memory-card reveal" key={memory.caption} style={{ transitionDelay: `${index * 70}ms` }}>
-              {memory.image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={memory.image} alt={`A favorite memory: ${memory.caption}`} />
-              ) : (
-                <div className={`photo-placeholder ${memory.tone}`} aria-label="Photo placeholder">
-                  <span>{["♡", "☼", "✦", "♥"][index]}</span>
-                  <small>Add our photo here</small>
-                </div>
-              )}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={memory.image}
+                alt={`A favorite memory together: ${memory.caption}`}
+                loading="lazy"
+                decoding="async"
+              />
               <figcaption>{memory.caption}</figcaption>
             </figure>
           ))}
