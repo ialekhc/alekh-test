@@ -1,221 +1,189 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { useMemo, useState } from "react";
-import { dateConfig } from "./date-config";
+import { useEffect, useMemo, useState } from "react";
 
-type Scene = "opening" | "letter" | "question" | "yes" | "date";
+// PERSONALIZE: Change her name here once and it updates the visible headings.
+const HER_NAME = "Maya";
 
-const hearts = ["♡", "♥", "✦", "♡", "·", "♥", "✧", "♡", "✦", "♥", "·", "♡"];
-const runawayNo = ["No 🙈", "Catch me first 😂", "Too slow, pretty 😌", "Not this button 🤭", "Still no? Suspicious 🤨", "Just press YES already 💘", "I can do this all day 🏃‍♀️"];
-const runawaySpots = [
-  { left: "72%", top: "78%" }, { left: "25%", top: "80%" },
-  { left: "73%", top: "64%" }, { left: "27%", top: "61%" },
-  { left: "53%", top: "83%" }, { left: "78%", top: "82%" },
-  { left: "22%", top: "70%" },
+// PERSONALIZE: Replace each empty `image` with a path such as "/images/us-1.jpg".
+// Put your photos inside public/images/ and keep the captions you like.
+const memories = [
+  { image: "", caption: "Yo din yaad cha? 🥹", tone: "peach" },
+  { image: "", caption: "Timro yo smile mero favourite ho ❤️", tone: "rose" },
+  { image: "", caption: "Hami dui jana + random memories = best combination 😂❤️", tone: "lilac" },
+  { image: "", caption: "Yo moment feri repeat garnu cha.", tone: "gold" },
 ];
 
-function Ambient({ celebration = false }: { celebration?: boolean }) {
-  const reduceMotion = useReducedMotion();
-  return (
-    <div className={`ambient ${celebration ? "celebration" : ""}`} aria-hidden="true">
-      {hearts.map((heart, index) => (
-        <motion.span
-          key={`${heart}-${index}`}
-          className={`particle p${index + 1}`}
-          animate={reduceMotion ? undefined : { y: [0, -16, 0], rotate: [0, index % 2 ? 8 : -8, 0] }}
-          transition={{ duration: 4 + (index % 4), repeat: Infinity, delay: index * 0.18, ease: "easeInOut" }}
-        >
-          {heart}
-        </motion.span>
-      ))}
-    </div>
-  );
-}
+// PERSONALIZE: Edit these little reasons whenever you want.
+const reasons = [
+  ["01", "Timro smile ❤️", "It makes even an ordinary day feel lighter."],
+  ["02", "Timro care garne bani", "The little things you notice mean more than you know."],
+  ["03", "Timro cute ris 😭", "Scary? Ali ali. Still cute? Unfortunately, yes."],
+  ["04", "Timro voice", "Instant comfort, even on the messiest days."],
+  ["05", "Timro presence", "Timro presence le nai mero din better banaidincha."],
+  ["06", "Honestly...", "Timi timi bhayera nai. ❤️"],
+];
 
-function SceneShell({ children, sceneKey }: { children: React.ReactNode; sceneKey: string }) {
-  const reduceMotion = useReducedMotion();
-  return (
-    <motion.section
-      key={sceneKey}
-      className="scene"
-      initial={reduceMotion ? false : { opacity: 0, y: 18, scale: 0.99 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -12, scale: 0.99 }}
-      transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
-    >
-      {children}
-    </motion.section>
-  );
-}
+const floatingHearts = ["♡", "♥", "♡", "·", "♥", "✦", "♡", "♥", "·", "♡"];
 
 export default function Home() {
-  const [scene, setScene] = useState<Scene>("opening");
-  const [noDodges, setNoDodges] = useState(0);
-  const reduceMotion = useReducedMotion();
-  const confetti = useMemo(() => Array.from({ length: 30 }, (_, index) => index), []);
+  const [answer, setAnswer] = useState<"little" | "very" | null>(null);
+  const [heartBurst, setHeartBurst] = useState(0);
+  const burstPieces = useMemo(() => Array.from({ length: 22 }, (_, index) => index), []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add("visible")),
+      { threshold: 0.13 },
+    );
+    const items = document.querySelectorAll(".reveal");
+    items.forEach((item) => observer.observe(item));
+    return () => observer.disconnect();
+  }, []);
+
+  const scrollToApology = () => document.querySelector("#sorry")?.scrollIntoView({ behavior: "smooth" });
 
   return (
     <main>
-      <Ambient celebration={scene === "yes" || scene === "date"} />
-      <div className="grain" aria-hidden="true" />
-      <AnimatePresence mode="wait">
-        {scene === "opening" && (
-          <SceneShell sceneKey="opening">
-            <motion.div className="silly-alert" initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.1 }}>
-              ⚠️ Cuteness ahead. Proceed dramatically.
-            </motion.div>
-            <div className="opening-mark"><span>♥</span></div>
-            <p className="eyebrow">A suspiciously cute love letter</p>
-            <h1>Hey {dateConfig.herName} <span className="heart">♥</span></h1>
-            <p className="lead">I made something just for you... because texting “hey” felt criminally under-romantic.</p>
-            <p className="soft-copy">Warning: may contain excessive affection, terrible jokes, and one very important question.</p>
-            <button className="primary wiggle" onClick={() => setScene("letter")}>Fine, show me <span>💌</span></button>
-            <p className="signature">with love (and zero chill), {dateConfig.fromName}</p>
-          </SceneShell>
-        )}
-
-        {scene === "letter" && (
-          <SceneShell sceneKey="letter">
-            <motion.figure className="story-image letter-image" initial={{ opacity: 0, y: 18, rotate: -2 }} animate={{ opacity: 1, y: 0, rotate: -1 }} transition={{ duration: .7 }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/love-letter.jpg" alt="A blush love letter beside a red rose in warm fairy lights" />
-              <figcaption>Special delivery for my favorite person 💌</figcaption>
-            </motion.figure>
-            <div className="letter-card">
-              <div className="tape" aria-hidden="true" />
-              <span className="mini-heart">♥</span>
-              <p className="letter-kicker">For you, always</p>
-              {[
-                "You know, some of my favorite moments are the simple ones I get to share with you — even when you steal the blanket and deny everything.",
-                "Your smile makes ordinary days feel special, your presence makes everything lighter, and your ability to live rent-free in my head is honestly getting ridiculous.",
-                "I like you more than naps, snacks, and being right. Please understand how serious this is.",
-              ].map((text, index) => (
-                <motion.p
-                  key={text}
-                  initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25 + index * 0.32, duration: 0.55 }}
-                >{text}</motion.p>
-              ))}
-              <motion.blockquote initial={reduceMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2, duration: .7 }}>
-                “There are millions of places we could go and thousands of things we could do… but honestly, none of that matters much to me. Because if I’m spending that moment with you, I already know it’s going to be special. So I have just one little question for my favorite person… 🥹❤️”
-              </motion.blockquote>
-            </div>
-            <button className="primary wiggle" onClick={() => setScene("question")}>Spill it already <span>🥺❤️</span></button>
-          </SceneShell>
-        )}
-
-        {scene === "question" && (
-          <SceneShell sceneKey="question">
-            <div className="dramatic-stage" aria-hidden="true"><i /><i /><i /><span>♥</span></div>
-            <motion.p className="eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .25 }}>The moment of truth</motion.p>
-            <motion.p className="so" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .6 }}>Okay. Deep breath...</motion.p>
-            <motion.h2 initial={{ opacity: 0, scale: .88 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.05, duration: .85, ease: [0.22, 1, 0.36, 1] }}>
-              Will you go on a<br /><em>date with me?</em> <span>🌹</span>
-            </motion.h2>
-            <motion.p className="soft-copy question-copy" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.65 }}>
-              Just you, me, good food, lots of smiles, and one beautiful memory waiting to happen.
-            </motion.p>
-            <motion.div className="only-answer" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 2.05 }}>
-              <span className="destiny-label">Two buttons. One of them has commitment issues. ✨</span>
-              <button className="yes-button solo" onClick={() => setScene("yes")}>YES, A THOUSAND TIMES YES! <span>♥</span></button>
-              <small>{noDodges === 0 ? "Choose wisely, my favorite person 🥹" : `No-button escape count: ${noDodges} · it is getting tired 😭`}</small>
-              <motion.button
-                type="button"
-                className="runaway-no"
-                aria-label="Playful no button that runs away"
-                animate={runawaySpots[noDodges % runawaySpots.length]}
-                transition={{ type: "spring", stiffness: 430, damping: 25 }}
-                onPointerEnter={() => setNoDodges((count) => count + 1)}
-                onPointerDown={(event) => { event.preventDefault(); setNoDodges((count) => count + 1); }}
-                onClick={(event) => { event.preventDefault(); setNoDodges((count) => count + 1); }}
-              >{runawayNo[noDodges % runawayNo.length]}</motion.button>
-            </motion.div>
-          </SceneShell>
-        )}
-
-        {scene === "yes" && (
-          <SceneShell sceneKey="yes">
-            <div className="confetti" aria-hidden="true">
-              {confetti.map((item) => <i key={item} style={{ "--i": item } as React.CSSProperties}>♥</i>)}
-            </div>
-            <div className="celebration-heart">♥</div>
-            <p className="eyebrow">Screenshotting this for evidence</p>
-            <h2 className="yay">YAYYYYY! <span>❤️🥹</span></h2>
-            <p className="lead">Excellent choice. Impeccable taste. Ten out of ten.</p>
-            <p className="soft-copy">You just made me the happiest little idiot alive. I promise I&apos;ll make our date worth every smile.</p>
-            <div className="tiny-divider"><span>✦</span><i /><span>♥</span><i /><span>✦</span></div>
-            <p className="reveal-copy">Your prize: me, but dressed slightly better. ✨</p>
-            <button className="primary wiggle" onClick={() => setScene("date")}>Show me the evidence <span>💕</span></button>
-          </SceneShell>
-        )}
-
-        {scene === "date" && (
-          <SceneShell sceneKey="date">
-            <p className="eyebrow">It&apos;s a date</p>
-            <h2>Our Date <span className="heart">♥</span></h2>
-            <div className="official-sticker">OFFICIALLY<br />CUTE</div>
-            <div className="date-card">
-              <div className="date-photo">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/date-night.jpg" alt="A cozy candlelit dinner table for two overlooking city lights" />
-                <span>Picture us here ✨</span>
-              </div>
-              <div className="date-stamp"><span>save</span><strong>the</strong><span>date</span></div>
-              <div className="date-details">
-                <div><span>Date</span><strong>{dateConfig.date}</strong></div>
-                <div><span>Time</span><strong>{dateConfig.time}</strong></div>
-                <div><span>Place</span><strong>{dateConfig.place}</strong></div>
-                <div><span>Our plan</span><strong>{dateConfig.plan}</strong></div>
-              </div>
-              <div className="dress-code"><span>Dress code</span><p>Come exactly as you are — your smile is enough. ❤️</p></div>
-              <p className="terms">Terms &amp; conditions: laughing at my jokes is optional but strongly encouraged. Dessert sharing remains under negotiation.</p>
-            </div>
-            <p className="date-note">No pressure. No complicated plans.<br />Just us, being cute and mildly embarrassing in public.</p>
-            <Memories />
-            <FinalMessage />
-          </SceneShell>
-        )}
-
-      </AnimatePresence>
-    </main>
-  );
-}
-
-function Memories() {
-  return (
-    <section className="memories">
-      <p className="eyebrow">Us, in little moments</p>
-      <h2>A Few Reasons<br /><em>You Make Me Smile</em> <span className="heart">♥</span></h2>
-      <div className="memory-grid">
-        {dateConfig.memories.map((memory, index) => (
-          <motion.figure key={memory.caption} whileHover={{ y: -5, rotate: index % 2 ? 0.5 : -0.5 }}>
-            {memory.image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={memory.image} alt={memory.caption} />
-            ) : (
-              <div className={`photo-placeholder ${memory.color}`} aria-label="Add your photo here">
-                <span>{["♡", "✦", "♥", "☼", "❀", "♡"][index]}</span>
-                <small>your photo here</small>
-              </div>
-            )}
-            <figcaption>{memory.caption}</figcaption>
-          </motion.figure>
-        ))}
+      <a className="skip-link" href="#sorry">Skip to my apology</a>
+      <div className="floating-hearts" aria-hidden="true">
+        {floatingHearts.map((heart, index) => <span key={index} className={`float-heart heart-${index + 1}`}>{heart}</span>)}
       </div>
-    </section>
-  );
-}
 
-function FinalMessage() {
-  return (
-    <footer>
-      <div className="footer-heart">♥</div>
-      <p>I don&apos;t know exactly what the future holds. Probably snacks. Hopefully us.</p>
-      <p>But I do know that the moments I spend with you are the ones I always want more of.</p>
-      <h3>So here&apos;s to one more date,<br />one more laugh,<br /><em>one more beautiful memory with you.</em> <span>❤️</span></h3>
-      <div className="made-with">Made with love, butterflies &amp; questionable coding decisions</div>
-    </footer>
+      <nav aria-label="Main navigation">
+        <a className="brand" href="#home"><span>♥</span> for {HER_NAME}</a>
+        <div>
+          <a href="#sorry">Sorry</a>
+          <a href="#memories">Memories</a>
+          <a href="#last-thing">Last thing</a>
+        </div>
+      </nav>
+
+      <header className="hero" id="home">
+        <div className="hero-orbit" aria-hidden="true"><span>♥</span></div>
+        <p className="eyebrow">Euta sano, heartfelt message</p>
+        <h1>Hey {HER_NAME} <span>❤️</span></h1>
+        <p className="hero-copy">
+          Yo website banaunu ko reason timilai impress garnu matra haina...
+          <strong>timilai properly sorry bhannu ho. 🥺</strong>
+        </p>
+        <button className="primary-button" onClick={scrollToApology}>
+          Ekchin mero kura suna na 🥺
+        </button>
+        <span className="scroll-note">I promise, no excuses ↓</span>
+      </header>
+
+      <section className="section apology-section" id="sorry">
+        <div className="section-heading reveal">
+          <p className="eyebrow">From my heart</p>
+          <h2>Ma genuinely <em>sorry</em> chu.</h2>
+          <p>No clever lines. No excuses. Just what I should have said properly.</p>
+        </div>
+
+        {/* PERSONALIZE: Change the apology paragraphs below to match your situation. */}
+        <article className="letter reveal">
+          <span className="letter-pin" aria-hidden="true">♥</span>
+          <p className="salutation">{HER_NAME},</p>
+          <p>Malai thaha cha maile timro feelings hurt gare.<br />Ani tesko lagi ma genuinely sorry chu.</p>
+          <p>Timilai dukha dine mero intention kahile pani thiyena, tara intention jasto bhaye pani timilai hurt bhayo, ani tyo kura ko responsibility mero ho.</p>
+          <p>Timro face ma smile dek्दा malai jati khusi lagcha, timro sadness ko reason ma nai bhaye bhanera sochda sachikai naramro lagcha.</p>
+          <p>Ma excuse dina khojeko haina. Ma bas timilai yo bujhauna khojdai chu ki timi mero lagi genuinely important chau.</p>
+          <p>Kahile kahi ma stupid hunchu, kahile kahi ma kura properly bujhdina, ani kahile kahi mero words le timilai hurt garna sakcha.</p>
+          <blockquote>Tara euta kura chai sure cha...<br /><strong>Ma timilai intentionally hurt garna kahile pani chahanna.</strong></blockquote>
+          <p>Sorry bhanera matra sabai instantly thik hudaina bhanne malai thaha cha.</p>
+          <p>Tei bhayera ma words bhanda pani mero actions le better huna try garnechu.</p>
+          <p>Timi deserve garchau ki timilai respect garos, bujhos, listen garos, ani timro feelings lai lightly nalios.</p>
+          <p className="letter-close">Maile timilai hurt gareko ma<br /><strong>sachikai sorry chu, {HER_NAME}. ❤️</strong></p>
+        </article>
+      </section>
+
+      <section className="section memory-section" id="memories">
+        <div className="section-heading reveal">
+          <p className="eyebrow">Little pieces of us</p>
+          <h2>Hamro moments <span>❤️</span></h2>
+          <p>Kehi memories jun ma feri-feri farkera herna chahanchu.</p>
+        </div>
+        <div className="memory-grid">
+          {memories.map((memory, index) => (
+            <figure className="memory-card reveal" key={memory.caption} style={{ transitionDelay: `${index * 70}ms` }}>
+              {memory.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={memory.image} alt={`A favorite memory: ${memory.caption}`} />
+              ) : (
+                <div className={`photo-placeholder ${memory.tone}`} aria-label="Photo placeholder">
+                  <span>{["♡", "☼", "✦", "♥"][index]}</span>
+                  <small>Add our photo here</small>
+                </div>
+              )}
+              <figcaption>{memory.caption}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      <section className="section reasons-section" id="reasons">
+        <div className="section-heading reveal">
+          <p className="eyebrow">Just a few reasons</p>
+          <h2>Timi kina special chau? <span>🌷</span></h2>
+        </div>
+        <div className="reasons-grid">
+          {reasons.map(([number, title, copy], index) => (
+            <article className="reason-card reveal" key={title} style={{ transitionDelay: `${index * 55}ms` }}>
+              <span>{number}</span><h3>{title}</h3><p>{copy}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section check-in-section">
+        <div className="check-in reveal">
+          <span className="tiny-sticker">honest answer only</span>
+          <p className="eyebrow">A very important survey</p>
+          <h2>Ajhai risako chau? 🥺</h2>
+          <div className="answer-buttons">
+            <button className="soft-button" onClick={() => setAnswer("little")}>Ali ali 😒</button>
+            <button className="soft-button" onClick={() => setAnswer("very")}>Dherai 😭</button>
+          </div>
+          <div className="answer-box" aria-live="polite">
+            {answer === "little" && <p>Okayyy... progress cha 😂❤️</p>}
+            {answer === "very" && <p>Fair enough 😭<br />Ma deserve garchu.<br />Tara ek chance chai deu na please 🥺❤️</p>}
+          </div>
+          {answer && (
+            <button className="primary-button make-up-button" onClick={() => setHeartBurst((value) => value + 1)}>
+              Can I make it up to you? 🥺
+            </button>
+          )}
+          {heartBurst > 0 && (
+            <div className="thank-you" key={heartBurst} aria-live="polite">
+              <div className="heart-burst" aria-hidden="true">
+                {burstPieces.map((piece) => <i key={piece} style={{ "--i": piece } as React.CSSProperties}>♥</i>)}
+              </div>
+              <strong>Thank you mero kura yaha samma padhdeko ma. ❤️</strong>
+              <p>Ma pressure dina khojeko haina.<br />Timi ready bhayepachi bas ekchoti kura garna paaye pugcha.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <footer className="section final-section" id="last-thing">
+        <div className="final-card reveal">
+          <div className="wax-heart" aria-hidden="true">♥</div>
+          <p className="eyebrow">One honest ending</p>
+          <h2>Last thing... ❤️</h2>
+          <div className="final-copy">
+            <p>Yo website le maile gareko mistake erase gardaina.</p>
+            <p>Tara ma simply &apos;sorry&apos; bhanera chhodna pani chahina.</p>
+            <p>Timi mero lagi important chau,<br />ani timro feelings pani important chan.</p>
+            <p>Ma perfect chaina,<br />tara timro lagi better huna chai genuinely try garna chahanchu.</p>
+            <span>So...</span>
+            <strong>I am really sorry, {HER_NAME}. ❤️</strong>
+            <p>Forgive me when your heart is ready.</p>
+            <p>No pressure.<br />No force.</p>
+            <p>Bas...<br /><b>ris ali kam gara na 😭❤️</b></p>
+          </div>
+        </div>
+        <p className="made-with">Made with ❤️, regret, and a little bit of coding.</p>
+      </footer>
+    </main>
   );
 }
