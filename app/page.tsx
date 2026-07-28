@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 // PERSONALIZE: Change her name here once and it updates the visible headings.
-const HER_NAME = "Maya";
+const HER_NAME = "Enzey";
 
 // PERSONALIZE: Replace these paths or captions whenever you want to update the gallery.
 const memories = [
@@ -92,7 +92,7 @@ export default function Home() {
           <p className="salutation">{HER_NAME},</p>
           <p>Malai thaha cha maile timro feelings hurt gare.<br />Ani tesko lagi ma genuinely sorry chu.</p>
           <p>Timilai dukha dine mero intention kahile pani thiyena, tara intention jasto bhaye pani timilai hurt bhayo, ani tyo kura ko responsibility mero ho.</p>
-          <p>Timro face ma smile dek्दा malai jati khusi lagcha, timro sadness ko reason ma nai bhaye bhanera sochda sachikai naramro lagcha.</p>
+          <p>Timro face ma smile dekhda malai jati khusi lagcha, timro sadness ko reason ma nai bhaye bhanera sochda sachikai naramro lagcha.</p>
           <p>Ma excuse dina khojeko haina. Ma bas timilai yo bujhauna khojdai chu ki timi mero lagi genuinely important chau.</p>
           <p>Kahile kahi ma stupid hunchu, kahile kahi ma kura properly bujhdina, ani kahile kahi mero words le timilai hurt garna sakcha.</p>
           <blockquote>Tara euta kura chai sure cha...<br /><strong>Ma timilai intentionally hurt garna kahile pani chahanna.</strong></blockquote>
@@ -186,7 +186,7 @@ export default function Home() {
             <p>Bas...<br /><b>ris ali kam gara na 😭❤️</b></p>
           </div>
         </div>
-        <p className="made-with">Made with ❤️, regret, and a little bit of coding.</p>
+        <p className="made-with">Made with ❤️ for you, regret, and a little bit of coding.</p>
       </footer>
     </main>
   );
