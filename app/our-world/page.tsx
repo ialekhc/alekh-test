@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./world.module.css";
-import { memories } from "./memories";
+import { chapters } from "./memories";
 
 const notes = [
   "Timro presence le ordinary din pani special banaidincha.",
@@ -18,23 +18,44 @@ const letters = [
 const adventures = ["A slow walk with no destination", "Coffee and a very long conversation", "A photo booth picture for our wallets", "Watch the sunset together"];
 
 export default function OurWorld() {
+  const [activeChapter, setActiveChapter] = useState("");
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter(entry => entry.isIntersecting);
+      if (visible.length) setActiveChapter(visible[0].target.id);
+    }, { rootMargin: "-120px 0px -45% 0px", threshold: 0 });
+    document.querySelectorAll("[data-memory-chapter]").forEach(section => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
   const [note, setNote] = useState(-1);
   const [selected, setSelected] = useState<number | null>(null);
   const [wishes, setWishes] = useState<number[]>([]);
   return (
     <main className={styles.world}>
+      <div className={styles.navigation}>
       <nav className={styles.nav} aria-label="Our world navigation">
         <a href="/">← Our first little page</a><span className={styles.wordmark}>E <i>♡</i> us</span><a href="#letters">Love letters ↗</a>
       </nav>
+      <nav className={styles.chapterNav} aria-label="Memory chapters">
+        <span className={styles.chapterLabel}>OUR CHAPTERS</span>
+        {chapters.map((chapter, index) => <a key={chapter.id} href={`#${chapter.id}`} aria-current={activeChapter === chapter.id ? "location" : undefined} onClick={() => setActiveChapter(chapter.id)}><span>0{index + 1}</span>{chapter.title}</a>)}
+        <a href="#next-chapter" aria-current={activeChapter === "next-chapter" ? "location" : undefined} onClick={() => setActiveChapter("next-chapter")}><span>03</span>Still to come ♡</a>
+      </nav>
+      </div>
       <header className={styles.hero}>
         <div className={styles.intro}><p className={styles.label}>FOR ENZEY, WITH ALL MY HEART</p><h1>Every little thing,<br /><em>better with you.</em></h1><p>Timi, ma, ani hamro sano sansar. A place to keep the moments I never want to forget, and a little love for the days in between.</p><a className={styles.button} href="#memories">Wander through our story <span>♡</span></a><span className={styles.sideNote}>No occasion. No reason. Just you.</span></div>
         <div className={styles.collage}><span className={styles.handNote}>my favourite place is next to you ↴</span><figure className={styles.heroPhoto}><img src="/images/memories/memory-04.jpg" alt="A moment together on a tree-lined path" fetchPriority="high" /><figcaption>my favourite kind of company ♡</figcaption><span className={styles.stamp}>always<br /><b>us</b></span></figure><figure className={styles.smallPhoto}><img src="/images/memories/memory-03.jpg" alt="Looking at each other, a little moment together" /><figcaption>you + me ♡</figcaption></figure><span className={styles.collageHeart} aria-hidden="true">♡</span></div>
       </header>
       <div className={styles.ribbon}><span>♡</span> EVERY PHOTO, A FEELING. EVERY MEMORY, YOU. <span>♡</span></div>
-      <section className={styles.section} id="memories"><div className={styles.sectionTop}><div><p className={styles.label}>01 / THE SCRAPBOOK</p><h2>Wish we could bottle these.</h2></div><p>A few frames I keep coming back to.</p></div><div className={styles.photos}>{memories.map((memory, index) => <figure key={memory.id}><div className={styles.photoTop}><span>MEMORY / 0{index + 1}</span>{memory.date ? <span>{memory.date}</span> : <span>Date to be added</span>}</div><img src={`/images/memories/memory-${memory.id}.jpg`} alt={memory.caption} loading="lazy" /><figcaption>{memory.caption} <span>♡</span></figcaption><p className={styles.photoPlace}>{memory.place}</p></figure>)}</div></section>
+      <section className={styles.section} id="memories"><div className={styles.sectionTop}><div><p className={styles.label}>01 / THE SCRAPBOOK</p><h2>Every chapter, a little closer.</h2></div><p>Different pages. The same favourite person.</p></div>
+        {chapters.map((chapter, chapterIndex) => <section className={styles.memoryChapter} key={chapter.id} id={chapter.id} data-memory-chapter>
+          <header className={styles.chapterHeading}><span>CHAPTER 0{chapterIndex + 1}</span><h3>{chapter.title}</h3><p>{chapter.subtitle}</p></header>
+          <div className={styles.photos}>{chapter.memories.map((memory, index) => <figure key={memory.id}><div className={styles.photoTop}><span>MEMORY / 0{index + 1}</span><span>{memory.date || "Date to be added"}</span></div><img src={`/images/memories/memory-${memory.id}.jpg`} alt={memory.caption} loading="lazy" /><figcaption>{memory.caption} <span>♡</span></figcaption><p className={styles.photoPlace}>{memory.place}</p></figure>)}</div>
+        </section>)}
+      </section>
       <section className={styles.jarSection}><div><p className={styles.label}>02 / A POCKETFUL OF GOOD THINGS</p><h2>A small reminder,<br />just for today.</h2><p>Kehi kura haru feri-feri bhanna man lagcha.<br />Pick one. There’s a little love in every note.</p></div><div className={styles.noteCard}><span className={styles.noteHeart} aria-hidden="true">♡</span><p aria-live="polite">{note < 0 ? "There’s something here for you." : notes[note]}</p><button className={styles.button} onClick={() => setNote((note + 1) % notes.length)}>{note < 0 ? "Pick a little note" : "One more little note"} ↗</button><small>{note < 0 ? "A tiny surprise. No occasion needed." : `${note + 1} of ${notes.length} little reminders`}</small></div></section>
       <section className={styles.section} id="letters"><p className={styles.label}>03 / SEALED WITH A LITTLE LOVE</p><h2>Open when...</h2><p className={styles.subtitle}>A few words for whatever kind of day finds you.</p><div className={styles.letters}>{letters.map((letter, index) => <div className={styles.envelope} data-open={selected === index} key={letter.title}><span className={styles.seal} aria-hidden="true">{letter.symbol}</span><h3>{letter.title}</h3><button aria-expanded={selected === index} aria-controls={`letter-${index}`} onClick={() => setSelected(selected === index ? null : index)}>{selected === index ? "Fold it back ↑" : "A letter for you ↗"}</button><p id={`letter-${index}`} hidden={selected !== index}>{letter.text}</p></div>)}</div></section>
-      <section className={styles.adventures}><div><p className={styles.label}>04 / OUR NEXT CHAPTER</p><h2>More of this.<br />More with you.</h2><p>A little wishlist for our next chapters.<br />Tap the ones you’d love to do.</p></div><div className={styles.wishlist}>{adventures.map((wish, index) => <button key={wish} aria-pressed={wishes.includes(index)} onClick={() => setWishes(wishes.includes(index) ? wishes.filter(item => item !== index) : [...wishes, index])}><span>{wishes.includes(index) ? "♥" : "○"}</span>{wish}<span>↗</span></button>)}<small>Your picks are just for this visit. We can make the plans together.</small></div></section>
+      <section className={styles.adventures} id="next-chapter" data-memory-chapter><div><p className={styles.label}>04 / OUR NEXT CHAPTER</p><h2>More of this.<br />More with you.</h2><p>A little wishlist for our next chapters.<br />Tap the ones you’d love to do.</p></div><div className={styles.wishlist}>{adventures.map((wish, index) => <button key={wish} aria-pressed={wishes.includes(index)} onClick={() => setWishes(wishes.includes(index) ? wishes.filter(item => item !== index) : [...wishes, index])}><span>{wishes.includes(index) ? "♥" : "○"}</span>{wish}<span>↗</span></button>)}<small>Your picks are just for this visit. We can make the plans together.</small></div></section>
       <footer className={styles.footer}><p className={styles.label}>A LOVE NOTE, WITHOUT AN ENDING</p><h2>Of all the little things,<br /><em>you’re my favourite.</em></h2><p>Here’s to the ordinary days that become our favourite memories.</p><span>With love, for Enzey ♡</span><a href="/">Back to the original page ↗</a></footer>
     </main>
   );
