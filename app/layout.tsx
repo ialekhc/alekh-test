@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     description: "A little apology, made with love.",
     images: ["/og.png"],
   },
-  icons: { icon: "/favicon.svg?v=2", shortcut: "/favicon.svg?v=2" },
+  icons: { icon: "/favicon.svg?v=3", shortcut: "/favicon.svg?v=3" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -109,3 +109,8 @@ h2 em { color:var(--rose-dark); font-weight:500; }
   .original-page .hero-orbit{width:60px;height:60px;margin-bottom:28px}
   .original-page .primary-button{font-size:14px;min-height:50px}
 }
+/* Shared warm plum palette, keeping the original page composition. */
+.original-page{--cream:#fff9f0;--paper:#fffcf6;--blush:#f1e5ee;--rose:#975879;--rose-dark:#78425e;--ink:#49314f;--muted:#80657d;--line:#e3cede;background:radial-gradient(circle at 10% 9%,#ecdeeb 0,transparent 22rem),linear-gradient(180deg,#fff9f0,#fff7ed)}
+.original-page h1,.original-page h2,.original-page h3{color:#49314f}
+.original-page .primary-button{background:#78425e;box-shadow:0 10px 25px #78425e20}
+.original-page .primary-button:hover{background:#60314b}
