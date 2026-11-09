@@ -99,14 +99,13 @@ h2 em { color:var(--rose-dark); font-weight:500; }
 }
 @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.reveal{opacity:1;translate:none} }
 
-/* Entry to the romantic scrapbook from the original page. */
-.world-menu{position:relative;align-self:center;color:var(--rose-dark)}
-.world-menu summary{min-height:44px;display:flex;align-items:center;gap:7px;cursor:pointer;list-style:none;font-size:.78rem;font-weight:650}
-.world-menu summary::-webkit-details-marker{display:none}
-.world-menu summary:focus-visible{outline:3px solid var(--rose-dark);outline-offset:4px;border-radius:4px}
-.world-menu[open] summary>span{transform:rotate(180deg)}
-nav .world-menu-links{position:absolute;right:0;top:calc(100% + 6px);z-index:10;width:245px;display:flex;flex-direction:column;gap:0;padding:8px;border:1px solid var(--line);border-radius:16px;background:var(--paper);box-shadow:0 14px 35px #793d481c}
-nav .world-menu-links a{display:flex;justify-content:space-between;align-items:center;min-height:46px;padding:12px;border-radius:9px;font-size:.75rem;font-weight:500;line-height:1.5}
-nav .world-menu-links a:first-child{color:var(--rose-dark);font-weight:700;border-bottom:1px solid #edcfd080;margin-bottom:4px}
-nav .world-menu-links a:hover{background:var(--blush)}
-@media(max-width:560px){nav .world-menu-links a:nth-child(2){display:flex}nav>div{gap:13px}nav .world-menu summary{font-size:.72rem}nav .world-menu-links{width:min(245px,calc(100vw - 32px))}}
+/* Keep the first page accessible below the shared navigation. */
+.original-page{overflow:clip}
+.original-page :is(section,header)[id]{scroll-margin-top:100px}
+@media(max-width:560px){
+  .original-page .hero{min-height:auto;padding:56px 0 64px}
+  .original-page h1{font-size:clamp(44px,12vw,64px)}
+  .original-page .hero-copy{font-size:17px;line-height:1.8}
+  .original-page .hero-orbit{width:60px;height:60px;margin-bottom:28px}
+  .original-page .primary-button{font-size:14px;min-height:50px}
+}

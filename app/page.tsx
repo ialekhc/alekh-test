@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import SiteNavigation from "./components/SiteNavigation";
 
 // PERSONALIZE: Change her name here once and it updates the visible headings.
 const HER_NAME = "Enzey";
@@ -50,29 +51,13 @@ export default function Home() {
   const scrollToApology = () => document.querySelector("#sorry")?.scrollIntoView({ behavior: "smooth" });
 
   return (
-    <main>
+    <main className="original-page">
       <a className="skip-link" href="#sorry">Skip to my apology</a>
       <div className="floating-hearts" aria-hidden="true">
         {floatingHearts.map((heart, index) => <span key={index} className={`float-heart heart-${index + 1}`}>{heart}</span>)}
       </div>
 
-      <nav aria-label="Main navigation">
-        <a className="brand" href="#home"><span>♥</span> for {HER_NAME}</a>
-        <div>
-          <a href="#sorry">Sorry</a>
-          <a href="#memories">Memories</a>
-          <a href="#last-thing">Last thing</a>
-          <details className="world-menu">
-            <summary>Our World ♡ <span aria-hidden="true">⌄</span></summary>
-            <div className="world-menu-links">
-              <a href="/our-world">Explore our world <span aria-hidden="true">↗</span></a>
-              <a href="/our-world#little-escapes">01 · Our little escapes</a>
-              <a href="/our-world#everyday-us">02 · Everyday us</a>
-              <a href="/our-world#next-chapter">03 · Still to come ♡</a>
-            </div>
-          </details>
-        </div>
-      </nav>
+      <SiteNavigation page="home" />
 
       <header className="hero" id="home">
         <div className="hero-orbit" aria-hidden="true"><span>♥</span></div>
