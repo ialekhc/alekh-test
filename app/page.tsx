@@ -62,6 +62,15 @@ export default function Home() {
           <a href="#sorry">Sorry</a>
           <a href="#memories">Memories</a>
           <a href="#last-thing">Last thing</a>
+          <details className="world-menu">
+            <summary>Our World ♡ <span aria-hidden="true">⌄</span></summary>
+            <div className="world-menu-links">
+              <a href="/our-world">Explore our world <span aria-hidden="true">↗</span></a>
+              <a href="/our-world#little-escapes">01 · Our little escapes</a>
+              <a href="/our-world#everyday-us">02 · Everyday us</a>
+              <a href="/our-world#next-chapter">03 · Still to come ♡</a>
+            </div>
+          </details>
         </div>
       </nav>
 
